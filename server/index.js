@@ -7,7 +7,7 @@ require("dotenv").config();
 const port = process.env.PORT || 5000;
 const uri = process.env.MONGO_URI ;
 
-mongoose.connect(uri).then(() => console.log('MongoDB Connected!')).catch(err => console.log(err));
+mongoose.connect(uri).then(() => console.log('MongoDB Connected Successfully !')).catch(err => console.log(err));
 
 // registration collection 
 const registrationSchema = new mongoose.Schema({
@@ -32,7 +32,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
-  res.status(200).send("Server: Volunteer Network by FSN");
+  res.status(200).send("Server of Volunteer-Network-FSN");
 });
 
 // Add Registration
