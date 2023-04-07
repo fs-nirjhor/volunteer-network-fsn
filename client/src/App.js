@@ -1,24 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes } from "react-router-dom";
+import { Container } from "react-bootstrap";
+import Home from "./components/Home/Home";
+import Header from "./components/Header/Header";
+import Login from "./components/Login/Login";
+import Register from "./components/Register/Register";
+import Events from "./components/Events/Events";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import Admin from "./components/Admin/Admin";
+import AddEvent from "./components/AddEvent/AddEvent";
+import VolunteerList from "./components/VolunteerList/VolunteerList";
+import { useState } from "react";
+import {auth} from "./firebase.init";
+import { onAuthStateChanged } from "firebase/auth";
+import { createContext } from "react";
+
+export const VolunteerContext = createContext();
 
 function App() {
+const [loggedUser, setLoggedUser] = useState({});
+  onAuthStateChanged(auth, (user) => {
+  if (user) {
+    setLoggedUser(user);
+  } else {
+    setLoggedUser({});
+  }
+});
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <VolunteerContext.Provider value={[loggedUser,setLoggedUser]}>
+      <Header />
+      <Container>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route element={<PrivateRoute isValid={!!loggedUser.email}/>} >
+          <Route path="/register" element={<Register />} />
+          <Route path="/register/:id" element={<Register />} />
+          <Route path="/events" element={<Events />} />
+          </Route>
+          <Route element={<PrivateRoute isValid={true}/>}>
+          <Route path="/admin" element={<Admin/>}>
+          <Route index element={<VolunteerList/>} />
+          <Route path="/admin/addEvent" element={<AddEvent/>} />
+          </Route>
+          </Route>
+          <Route path="*" element={<h1 className="text-center mt-5">Page Not Found (404)</h1>}/>
+        </Routes>
+      </Container>
+    </VolunteerContext.Provider>
   );
 }
 
