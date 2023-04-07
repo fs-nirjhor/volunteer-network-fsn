@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require("dotenv").config();
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 const uri = process.env.MONGO_URI ;
 
 mongoose.connect(uri).then(() => console.log('MongoDB Connected!')).catch(err => console.log(err));
