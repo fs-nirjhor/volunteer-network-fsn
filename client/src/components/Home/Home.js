@@ -13,7 +13,7 @@ const Home = () => {
     })
     .catch(error => console.log(error.message));
   }, []);
-  
+
 return (
   <div className="mt-3">
   <h3 className="text-center">I GROW BY HELPING PEOPLE IN NEED</h3>

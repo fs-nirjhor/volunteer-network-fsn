@@ -17,8 +17,9 @@ const AddEvent = () => {
     .catch(error => console.log(error.message));
   };
 return (
-  <div>
-    <h4>Add Event</h4>
+  <div className="bg-secondary bg-opacity-10">
+    <h4 className="bg-white p-3">Add Event</h4>
+    <section className="bg-white m-3 p-3 rounded">
         <Form onSubmit={handleSubmit} >
         <Row xs={1} md={2}>
        <Col>
@@ -42,8 +43,11 @@ return (
       </Form.Group>
        </Col>
        </Row>
-      <Button variant="primary" type="submit" >Submit</Button>
+       <section className="text-end">
+      <Button variant="primary" type="submit"  >Submit</Button>
+       </section>
     </Form>
+    </section>
   </div>
 );
 };
