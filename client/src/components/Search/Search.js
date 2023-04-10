@@ -1,4 +1,4 @@
-import { InputGroup, Form, Button, Row, Divider } from "react-bootstrap";
+import { InputGroup, Form, Button, Row } from "react-bootstrap";
 import { useState } from "react";
 import SingleEvent from "../SingleEvent/SingleEvent";
 
