@@ -9,7 +9,7 @@ import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Admin from "./components/Admin/Admin";
 import AddEvent from "./components/AddEvent/AddEvent";
 import VolunteerList from "./components/VolunteerList/VolunteerList";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {auth} from "./firebase.init";
 import { onAuthStateChanged } from "firebase/auth";
 import { createContext } from "react";
@@ -18,6 +18,7 @@ export const VolunteerContext = createContext();
 
 function App() {
 const [loggedUser, setLoggedUser] = useState({});
+useEffect(() => {
   onAuthStateChanged(auth, (user) => {
   if (user) {
     setLoggedUser(user);
@@ -25,6 +26,7 @@ const [loggedUser, setLoggedUser] = useState({});
     setLoggedUser({});
   }
 });
+}, []);
   return (
     <VolunteerContext.Provider value={[loggedUser,setLoggedUser]}>
       <Header />

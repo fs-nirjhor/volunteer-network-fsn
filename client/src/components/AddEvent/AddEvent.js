@@ -13,6 +13,7 @@ const AddEvent = () => {
     .then(res => res.json())
     .then(data => {
       console.log(data);
+      alert("Added");
     })
     .catch(error => console.log(error.message));
   };

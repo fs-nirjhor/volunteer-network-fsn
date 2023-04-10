@@ -4,6 +4,17 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require("dotenv").config();
 
+// Firebase admin
+var admin = require("firebase-admin");
+
+var serviceAccount = require("./configs/volunteer-network-fsn-firebase-adminsdk-lr7y5-a853f318f1.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://volunteer-network-fsn.firebaseio.com'
+});
+
+
 //const port = process.env.PORT || 5000 ;
 const port = 5000;
 const app = express();
@@ -13,9 +24,17 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Mongoose Connection 
+// Routes
+app.get("/", (req, res) => {
+  res.status(200).send("Server of Volunteer Network FSN");
+});
+
+// Database uri 
 const uri = process.env.MONGO_URI ;
-mongoose.connect(uri).then(() => console.log('MongoDB Connected!')).catch(err => console.log(err));
+
+async function main() {
+  // Database Connection 
+await mongoose.connect(uri).then(() => console.log('MongoDB Connected!'));
 
 // registration collection 
 const registrationSchema = new mongoose.Schema({
@@ -25,6 +44,7 @@ const registrationSchema = new mongoose.Schema({
   event: { type: String, required: true },
   date: { type: String, required: true },
   description: { type: String, required: true },
+  img: { type: String, required: true },
 });
 const Registrations = mongoose.model('Registrations', registrationSchema);
 
@@ -34,12 +54,7 @@ const eventsSchema = new mongoose.Schema({
   title: { type: String, required: true, unique: true },
   img: { type: String, required: true },
 });
-const Events = mongoose.model('NewEvents', eventsSchema);
-
-// Routes
-app.get("/", (req, res) => {
-  res.status(200).send("Server of Volunteer Network FSN");
-});
+const Events = mongoose.model('Events', eventsSchema);
 
 // Add Registration
 app.post("/add-registration", async (req, res) => {
@@ -109,33 +124,68 @@ app.get("/volunteer-list", async(req, res) => {
   }
 });
 
-// Get Registration Data
-app.get("/registrations", async (req, res) => {
-  const bearer = req.headers.authorization;
-  if (bearer && bearer.startsWith("Bearer ")) {
-    const idToken = bearer.split(" ")[1];
-    await admin
-      .auth()
-      .verifyIdToken(idToken)
-      .then(async (decodedToken) => {
-        const tokenEmail = decodedToken.email;
-        const userEmail = req.query.email;
-        console.log({ tokenEmail, userEmail });
-        if (tokenEmail === userEmail) {
-          const result = await Registrations.find({ email: userEmail });
-          res.status(200).send(result);
-        } else {
-          res.status(401).send("Un-authorized Access");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        res.status(401).send("Un-authorized Access");
-      });
-  } else {
-    res.status(401).send("Un-authorized Access");
+// Get registered events 
+app.get("/registered-events", async (req,res) => {
+  try {
+    const userEmail = req.query.email ;
+    const idToken = req.headers.authorization;
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    if (decodedToken?.email === userEmail) {
+      const result = await Registrations.find({email: userEmail});
+      console.log(`Get ${result.length} Registered Events!`);
+      res.status(200).send(result);
+    } else {
+      console.log("Un-authorized access!");
+      res.status(401).send("Un-authorized access!");
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send(error.message);
   }
 });
+
+// search results
+app.get("/search", async (req, res) => {
+  try {
+    const search = req.query.search ;
+  const result = await Events.find({ title: { $regex: search, $options: "i" } });
+  console.log(`Get ${result.length} search results for ${search}!`);
+  res.status(200).send(result);
+  } catch (error) {
+  console.log(error.message);
+    res.status(500).send(error.message);
+  }
+});
+
+// Delete Registration
+app.delete("/delete-registration", async (req,res) => {
+  try {
+    const id = req.body.id;
+    const result = await Registrations.findByIdAndDelete(id);
+    console.log(`Deleted Registration: ${result.event} (${result.name})`);
+    res.status(200).send(result);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).send(e.message);
+  }
+});
+
+// Delete registered event
+app.delete("/cancel-registered-event", async (req, res) => {
+  try {
+    const id = req.body.id;
+    const result = await Registrations.findByIdAndDelete(id);
+    console.log(`Cancelled Registration: ${result.event} (${result.name})`);
+    res.status(200).send(result);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).send(e.message);
+  }
+});
+
+} 
+main().catch(console.dir);
+
 
 // Listenining
 app.listen(port, () => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Table from "react-bootstrap/Table";
+import {Table, Button} from "react-bootstrap";
 import { RiDeleteBinLine } from "react-icons/ri";
 
 const VolunteerList = () => {
@@ -12,6 +12,19 @@ const VolunteerList = () => {
       })
       .catch((error) => console.log(error.message));
   }, []);
+ const handleDelete = (id) => {
+   fetch(`http://localhost:5000/delete-registration`, {
+     method: "DELETE", 
+     headers: {"Content-type":"application/json"},
+     body: JSON.stringify({id})
+   })
+   .then(res => res.json())
+   .then(data => {
+     console.log(data);
+     alert("Deleted");
+   })
+   .catch(error => console.log(error.message));
+ };
 
   return (
     <div className="bg-secondary bg-opacity-10">
@@ -29,24 +42,18 @@ const VolunteerList = () => {
         </thead>
         <tbody>
           {volunteers.map((volunteer) => {
-            const { id, name, email, date, event } = volunteer;
+            const { _id, name, email, date, event } = volunteer;
             return (
-              <tr key={id}>
+              <tr key={_id}>
                 <td>{name}</td>
                 <td>{email}</td>
                 <td>{date}</td>
                 <td>{event}</td>
                 <td>
-                  <RiDeleteBinLine
-                    color="white"
-                    size={30}
-                    style={{
-                      backgroundColor: "red",
-                      borderRadius: 5,
-                      padding: 3,
-                      margin: "auto",
-                    }}
+                <Button variant="danger">
+                  <RiDeleteBinLine size={24} onClick = { () => handleDelete(_id) }
                   />
+                </Button>
                 </td>
               </tr>
             );

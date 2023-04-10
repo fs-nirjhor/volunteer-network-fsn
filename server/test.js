@@ -6,15 +6,27 @@ require("dotenv").config();
 
 //const port = process.env.PORT || 5000 ;
 const port = 5000;
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// Database uri 
 const uri = process.env.MONGO_URI ;
 
-mongoose.connect(uri).then(() => console.log('MongoDB Connected!')).catch(err => console.log(err));
+async function main() {
+  // Database Connection 
+await mongoose.connect(uri).then(() => console.log('MongoDB Connected!'));
 
 // registration collection 
 const registrationSchema = new mongoose.Schema({
+  id: { type: String, required: true },
   name: { type: String, required: true },
   email: { type: String, required: true },
   event: { type: String, required: true },
+  date: { type: String, required: true },
   description: { type: String, required: true },
 });
 const Registrations = mongoose.model('Registrations', registrationSchema);
@@ -27,25 +39,18 @@ const eventsSchema = new mongoose.Schema({
 });
 const Events = mongoose.model('Events', eventsSchema);
 
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-
+// Routes
 app.get("/", (req, res) => {
-  try {
   res.status(200).send("Server of Volunteer Network FSN");
-  } catch (e) {
-    console.log(error.message);
-    res.status(500).send(error.message);
-  }
 });
 
 // Add Registration
 app.post("/add-registration", async (req, res) => {
   try {
-  console.log(req.body);
-  const registration = new Registrations(req.body);
+  const newRegistration = req.body ;
+  const id = await Registrations.countDocuments();
+  newRegistration.id = id + 1;
+  const registration = new Registrations(newRegistration);
   const result = await registration.save();
   console.log(result.description);
   res.status(200).send(result);
@@ -80,7 +85,7 @@ app.get("/events", async (req, res) => {
   } catch (e) {
     console.log(e.message);
     res.status(500).send(e.message);
-  }
+  } 
 });
 
 // get event by id
@@ -134,7 +139,10 @@ app.get("/registrations", async (req, res) => {
     res.status(401).send("Un-authorized Access");
   }
 });
+} 
+main().catch(console.dir);
 
+// Listenining
 app.listen(port, () => {
   console.log(`Server running at ${port}`);
 });

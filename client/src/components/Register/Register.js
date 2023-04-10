@@ -5,14 +5,26 @@ import { useParams } from "react-router-dom";
 
 function Register() {
   const [loggedUser] = useContext(VolunteerContext); 
-  const [event, setEvent] = useState({});
-  
+  const [selectedEvent, setSelectedEvent] = useState({});
   const {id} = useParams();
+  
+   //get Events data from server 
+ useEffect(() => {
+   fetch(`http://localhost:5000/events/${id}`)
+.then(res => res.json())
+.then(data => {
+  setSelectedEvent(data);
+})
+.catch(error => console.log(error.message));
+ }, [id]);
+ 
   // send Registration data to server
   const handleSubmit = (event) => {
     event.preventDefault(); 
     const data = new FormData(event.target);
     const formData = Object.fromEntries(data);
+    formData.img = selectedEvent.img ;
+    console.log(formData);
   fetch(`http://localhost:5000/add-registration`, {
       method: "POST", 
       headers: {"Content-type": "application/json"},
@@ -21,18 +33,10 @@ function Register() {
     .then(res => res.json())
     .then(data => {
       console.log(data);
+      alert("Registration Successful!");
     })
     .catch(error => console.log(error.message));
   };
- //get Events data from server 
- useEffect(() => {
-   fetch(`http://localhost:5000/events/${id}`)
-.then(res => res.json())
-.then(data => {
-  setEvent(data);
-})
-.catch(error => console.log(error.message));
- }, [id]);
  
   return (
     <section className="text-center mt-5">
@@ -53,7 +57,7 @@ function Register() {
             <Form.Control as="textarea" placeholder="Description" style={{ height: '100px' }} name="description" required/>
           </FloatingLabel>
           <FloatingLabel controlId="floatingEvent" label="Event" className="mb-4">
-            <Form.Control type="text" placeholder="Event" name="event" defaultValue={event.title} readOnly/>
+            <Form.Control type="text" placeholder="Event" name="event" defaultValue={selectedEvent.title} readOnly/>
           </FloatingLabel>
           <Button variant="primary" type="submit" className="w-100">
             Registration
