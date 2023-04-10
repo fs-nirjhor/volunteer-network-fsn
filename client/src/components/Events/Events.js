@@ -7,9 +7,7 @@ const Events = () => {
   const getEvents = async () => {
     try {
       const email = await auth.currentUser.email;
-      const idToken = await auth.currentUser.getIdToken(
-        /* forceRefresh */ true
-      );
+      const idToken = await auth.currentUser.accessToken;
       const response = await fetch(
         `http://localhost:5000/registered-events?email=${email}`,
         {

@@ -38,8 +38,6 @@ useEffect(() => {
           <Route path="/register" element={<Register />} />
           <Route path="/register/:id" element={<Register />} />
           <Route path="/events" element={<Events />} />
-          </Route>
-          <Route element={<PrivateRoute isValid={true}/>}>
           <Route path="/admin" element={<Admin/>}>
           <Route index element={<VolunteerList/>} />
           <Route path="/admin/addEvent" element={<AddEvent/>} />

@@ -14,7 +14,6 @@ admin.initializeApp({
   databaseURL: 'https://volunteer-network-fsn.firebaseio.com'
 });
 
-
 //const port = process.env.PORT || 5000 ;
 const port = 5000;
 const app = express();
@@ -182,6 +181,23 @@ app.delete("/cancel-registered-event", async (req, res) => {
     res.status(500).send(e.message);
   }
 });
+
+// request to be an admin  
+app.post("/admin-request", async (req, res) => {
+  try {
+  const uid = req.body.uid;
+  const claims = {role: "admin"};
+  const result = await admin.auth().setCustomUserClaims(uid, claims);
+  console.log(uid + " is now an Admin !", result);
+  const message = {message: uid + "is now an Admin !" }
+  res.status(200).send(message);
+  } catch (e) {
+    const message = {message: e.message} ;
+    console.log(message);
+    res.status(500).send(message);
+  }
+});
+
 
 } 
 main().catch(console.dir);
