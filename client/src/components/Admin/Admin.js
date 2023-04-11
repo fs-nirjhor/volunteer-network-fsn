@@ -24,7 +24,7 @@ const Admin = () => {
     try {
       const uid = await auth.currentUser.uid;
       const response = await fetch(
-        `http://localhost:5000/admin-request`,
+        `https://volunteer-network-fsn-server.onrender.com/admin-request`,
         {
           method: "POST",
           headers: {

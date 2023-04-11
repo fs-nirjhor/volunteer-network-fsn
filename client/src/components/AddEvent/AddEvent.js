@@ -5,7 +5,7 @@ const AddEvent = () => {
     event.preventDefault(); 
     const data = new FormData(event.target);
     const formData = Object.fromEntries(data);
-  fetch(`http://localhost:5000/add-event`, {
+  fetch(`https://volunteer-network-fsn-server.onrender.com/add-event`, {
       method: "POST", 
       headers: {"Content-type": "application/json"},
       body: JSON.stringify(formData)
@@ -15,7 +15,7 @@ const AddEvent = () => {
       console.log(data);
       alert("Added");
     })
-    .catch(error => console.log(error.message));
+    .catch(error => alert(error.message));
   };
 return (
   <div className="bg-secondary bg-opacity-10">

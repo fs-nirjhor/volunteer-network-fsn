@@ -5,7 +5,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 const VolunteerList = () => {
   const [volunteers, setVolunteers] = useState([]);
   useEffect(() => {
-    fetch(`http://localhost:5000/volunteer-list`)
+    fetch(`https://volunteer-network-fsn-server.onrender.com/volunteer-list`)
       .then((res) => res.json())
       .then((data) => {
         setVolunteers(data);
@@ -13,7 +13,7 @@ const VolunteerList = () => {
       .catch((error) => console.log(error.message));
   }, []);
  const handleDelete = (id) => {
-   fetch(`http://localhost:5000/delete-registration`, {
+   fetch(`https://volunteer-network-fsn-server.onrender.com/delete-registration`, {
      method: "DELETE", 
      headers: {"Content-type":"application/json"},
      body: JSON.stringify({id})
@@ -23,7 +23,7 @@ const VolunteerList = () => {
      console.log(data);
      alert("Deleted");
    })
-   .catch(error => console.log(error.message));
+   .catch(error => alert(error.message));
  };
 
   return (

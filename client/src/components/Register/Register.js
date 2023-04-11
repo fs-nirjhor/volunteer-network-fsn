@@ -1,21 +1,21 @@
 import { FloatingLabel, Form, Container, Button } from "react-bootstrap";
 import { useContext, useEffect, useState } from "react";
 import {VolunteerContext} from "../../App";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 function Register() {
   const [loggedUser] = useContext(VolunteerContext); 
   const [selectedEvent, setSelectedEvent] = useState({});
   const {id} = useParams();
-  
+  const navigate = useNavigate();
    //get Events data from server 
  useEffect(() => {
-   fetch(`http://localhost:5000/events/${id}`)
+   fetch(`https://volunteer-network-fsn-server.onrender.com/events/${id}`)
 .then(res => res.json())
 .then(data => {
   setSelectedEvent(data);
 })
-.catch(error => console.log(error.message));
+.catch(error => alert(error.message));
  }, [id]);
  
   // send Registration data to server
@@ -25,17 +25,18 @@ function Register() {
     const formData = Object.fromEntries(data);
     formData.img = selectedEvent.img ;
     console.log(formData);
-  fetch(`http://localhost:5000/add-registration`, {
+  fetch(`https://volunteer-network-fsn-server.onrender.com/add-registration`, {
       method: "POST", 
       headers: {"Content-type": "application/json"},
       body: JSON.stringify(formData)
     })
     .then(res => res.json())
     .then(data => {
+      navigate("/events");
       console.log(data);
       alert("Registration Successful!");
     })
-    .catch(error => console.log(error.message));
+    .catch(error => alert(error.message));
   };
  
   return (

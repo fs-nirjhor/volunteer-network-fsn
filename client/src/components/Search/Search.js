@@ -8,7 +8,7 @@ const Search = () => {
   const handleSearch = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/search?search=${searchInput}`
+        `https://volunteer-network-fsn-server.onrender.com/search?search=${searchInput}`
       );
       const result = await response.json();
       setSearchedEvents(result);

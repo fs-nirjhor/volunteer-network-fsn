@@ -4,12 +4,13 @@ import { Row, Col, Button } from "react-bootstrap";
 
 const Events = () => {
   const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [cancelled, setCancelled] = useState(0);
   const getEvents = async () => {
     try {
       const email = await auth.currentUser.email;
       const idToken = await auth.currentUser.accessToken;
       const response = await fetch(
-        `http://localhost:5000/registered-events?email=${email}`,
+        `https://volunteer-network-fsn-server.onrender.com/registered-events?email=${email}`,
         {
           method: "GET",
           headers: {
@@ -28,12 +29,12 @@ const Events = () => {
 
   useEffect(() => {
     getEvents();
-  }, []);
+  }, [cancelled]);
 
   const handleCancel = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/cancel-registered-event`,
+        `https://volunteer-network-fsn-server.onrender.com/cancel-registered-event`,
         {
           method: "DELETE",
           headers: {
@@ -45,8 +46,9 @@ const Events = () => {
       const cancelledEvent = await response.json();
       console.log(cancelledEvent);
       alert("Cancelled: " + cancelledEvent.event);
+      setCancelled(cancelled+1);
     } catch (e) {
-      console.log(e.message);
+      alert(e.message);
     }
   };
   return (

@@ -13,7 +13,7 @@ const LogButton = () => {
     signOut(auth).then(() => {
   console.log("Sign-out successful.");
 }).catch((error) => {
-  console.log(error.code);
+  alert(error.code);
 });
   };
 return (
