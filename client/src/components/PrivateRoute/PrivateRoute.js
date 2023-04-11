@@ -7,7 +7,6 @@ const PrivateRoute = ({isValid}) => {
   } else {
     return <Navigate replace to="/login" state = {{from: location}}/>
   }
-
 };
 
 export default PrivateRoute;
