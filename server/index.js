@@ -11,7 +11,7 @@ var serviceAccount = require("./configs/volunteer-network-fsn-firebase-adminsdk-
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://volunteer-network-fsn.firebaseio.com'
+  databaseURL: 'https://volunteer-network-fsn-default-rtdb.firebaseio.com'
 });
 
 //const port = process.env.PORT || 5000 ;
