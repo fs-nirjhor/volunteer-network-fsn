@@ -79,7 +79,7 @@ app.post("/add-event", async (req, res) => {
   newEvent.id = id + 1;
   const event = new Events(newEvent);
   const result = await event.save();
-  console.log("New Event:" + result.title);
+  console.log("New Event: " + result.title);
   res.status(200).send(result);
   } catch (e) {
     console.log(e.message);
